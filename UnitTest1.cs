@@ -4,40 +4,49 @@ using OpenQA.Selenium.Chrome;
 using System.Threading;
 
 
-namespace InfiniteScroll_NUnitTestProject
+namespace KeyPresses_NUnitTestProject
 {
-
-    //class of the testcase described on the document
     public class Tests
     {
-        IWebDriver driver;
 
+        IWebDriver driver;
+        KeyPressesClass keyClass;
 
         //method that run before each testcase (to alow open the browser)
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
 
             driver = new ChromeDriver();
-            driver.Navigate().GoToUrl("http://the-internet.herokuapp.com/infinite_scroll");
+            driver.Navigate().GoToUrl("http://the-internet.herokuapp.com/key_presses");
+    
 
         }
 
-        //Scenario to simulate scroll down twice and then scroll up and check that  the page title have correct info. and correct offset
+        // Simulate when the user fill the key and according the keyboard dictionary return True, if in all iterations the keys submeted and expected are the same
         [Test(), Order(1)]
-
-        public void IsPerformedScrollProcess()
+        public void isSameKey()
         {
-            string titleContent = "";
-            InfiniteScrollClass infiniteScroll = new InfiniteScrollClass();
-            //Perfom scroll down and then up
-            bool performedScroll = infiniteScroll.PerformScrollDownUp(driver);
-            // Get the element that have the page title content
-            IWebElement elementObtained = infiniteScroll.GetTitleContent(driver);
-             if (elementObtained != null)
-                titleContent = elementObtained.Text.ToString();
-             
-            Assert.IsTrue(performedScroll && (elementObtained.Displayed) &&(titleContent.Contains("Infinite Scroll")));
+            keyClass = new KeyPressesClass();
+
+            //Repeat the request  4 times
+            int round = 0;
+            bool isAlwaysSameKey = true;
+            while (round<5)
+            {
+                round = round + 1;
+
+                bool isvalid = keyClass.CompareKeys(driver);
+                Thread.Sleep(2000);
+                if (isvalid.Equals(false))
+                    isAlwaysSameKey = false;
+            
+            }
+            Assert.IsTrue(isAlwaysSameKey);
+
+            driver.Close();
         }
+
+      
     }
 }
